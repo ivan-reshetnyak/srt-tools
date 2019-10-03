@@ -1,5 +1,6 @@
 from ..util import console
 from ..util import logging
+from datetime import datetime, timedelta
 
 
 logging.start()
@@ -9,5 +10,25 @@ args = console.parse()
 missing = list(console.missing_keys("input", "output", "shift", args=args))
 if missing:
     logging.terminate("Missing parameters: %s" % missing, -1)
+
+print("Working...")
+delta = timedelta(seconds=int(args["shift"]))
+with open(args["input"], encoding="utf8") as fileIn, open(args["output"], "w+", encoding="utf8") as fileOut:
+    if fileIn:
+        fileOut.write(fileIn.readline())  # Popup number, just copy
+        timesStr = fileIn.readline().strip().split(" --> ")  # Line with times, split in beginning/end
+        timesOut = []
+        for timeStr in timesStr:
+            time = datetime.strptime(timeStr, "%H:%M:%S,%f")
+            time += delta
+            timesOut.append(time.strftime("%H:%M:%S,%f"))
+        fileOut.write(" --> ".join(timesOut) + "\n")
+
+        strIn = fileIn.readline()
+        while strIn != "":
+            fileOut.write(strIn)
+            strIn = fileIn.readline()
+        else:
+            fileOut.write(strIn)
 
 logging.finish()
