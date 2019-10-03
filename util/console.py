@@ -1,5 +1,4 @@
 import sys
-from .FatalError import FatalError
 
 
 def parse():
@@ -12,3 +11,10 @@ def parse():
             print("Wrong argument format: %s, must be <key>=<value>" % arg)
 
     return res
+
+
+def missing_keys(*needed, args=None):
+    args = args or parse()
+    for key in needed:
+        if key not in args:
+            yield key
