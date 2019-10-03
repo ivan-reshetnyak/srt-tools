@@ -14,10 +14,14 @@ if missing:
 print("Working...")
 delta = timedelta(seconds=int(args["shift"]))
 with open(args["input"], encoding="utf8") as fileIn, open(args["output"], "w+", encoding="utf8") as fileOut:
-    if fileIn:
+    while fileIn:
         fileOut.write(fileIn.readline())  # Popup number, just copy
         timesStr = fileIn.readline().strip().split(" --> ")  # Line with times, split in beginning/end
+        if len(timesStr) < 2:
+            # File over
+            break
         timesOut = []
+        print(timesStr)
         for timeStr in timesStr:
             time = datetime.strptime(timeStr, "%H:%M:%S,%f")
             time += delta
@@ -25,7 +29,7 @@ with open(args["input"], encoding="utf8") as fileIn, open(args["output"], "w+", 
         fileOut.write(" --> ".join(timesOut) + "\n")
 
         strIn = fileIn.readline()
-        while strIn != "":
+        while len(strIn) > 0 and strIn != "\n":
             fileOut.write(strIn)
             strIn = fileIn.readline()
         else:
